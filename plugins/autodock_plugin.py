@@ -547,6 +547,7 @@ class Autodock:
         self.autogrid_exe = StringVar()
         self.autodock_exe = StringVar()
         self.vina_exe = StringVar()
+        self.work_dir = StringVar()
 
         # ligand display settings
 
@@ -886,7 +887,7 @@ class Autodock:
         self.work_path_location = Pmw.EntryField(self.configuration_group.interior(),
                                                  labelpos='w',
                                                  label_pyclass=DirDialogButtonClassFactory.get(self.set_work_path_location),
-                                                 value=os.path.abspath(os.curdir),
+                                                 value=self.config_settings['work_dir'],
                                                  label_text='Working Directory:')
 
         for x in [self.autodock_tools_location,
@@ -1816,6 +1817,8 @@ class Autodock:
 
     def set_work_path_location(self, dirname):
         self.work_path_location.setvalue(dirname)
+        self.work_dir.set(dirname)
+        self.config_settings['work_dir'] = dirname
 
     def work_dir(self):
         return self.work_path_location.getvalue()
@@ -1827,6 +1830,7 @@ class Autodock:
         self.config_settings['autogrid_exe'] = ''
         self.config_settings['autodock_exe'] = ''
         self.config_settings['vina_exe'] = ''
+        self.config_settings['work_dir'] = os.path.abspath(os.curdir)
 
         if 'PYMOL_GIT_MOD' in os.environ:
             self.config_settings['autodock_tools_path'] = os.path.join(os.environ['PYMOL_GIT_MOD'], "ADT", "AutoDockTools", "Utilities24")
@@ -1864,6 +1868,7 @@ class Autodock:
         self.autodock_exe.set(self.config_settings['autodock_exe'])
         self.vina_exe.set(self.config_settings['vina_exe'])
         self.autodock_tools_path.set(self.config_settings['autodock_tools_path'])
+        self.work_dir.set(self.config_settings['work_dir'])
         return self.config_settings
 
     def save_plugin_config_file(self):
@@ -1875,6 +1880,7 @@ class Autodock:
         self.config_settings['autodock_exe'] = self.autodock_location.getvalue()
         self.config_settings['vina_exe'] = self.vina_location.getvalue()
         self.config_settings['autodock_tools_path'] = self.autodock_tools_location.getvalue()
+        self.config_settings['work_dir'] = self.work_path_location.getvalue()
         # print 'ADDD', self.autodock_location.getvalue()
         for key, val in self.config_settings.items():
             print(key, '=', val, file=fp)
